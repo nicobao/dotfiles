@@ -94,6 +94,18 @@ alias l='ls -lrt'
 alias vi='nvim'
 alias vim='nvim'
 
+# zkorum
+alias zkorum='cd /home/nicobao/zkorum/zkorum'
+alias front='cd /home/nicobao/zkorum/zkorum/services/front'
+alias back='cd /home/nicobao/zkorum/zkorum/services/back'
+alias shared='cd /home/nicobao/zkorum/zkorum/services/shared'
+alias landing='cd /home/nicobao/zkorum/zkorum/services/landing-page'
+alias devfront='zkorum && make dev-front'
+alias devback='zkorum && make dev-back'
+alias devsync='zkorum && make dev-sync'
+alias devgen='zkorum && make dev-generate'
+alias dev='/home/nicobao/zkorum/zkorum/run_all_in_gnome_terminal_tabs.sh'
+
 export VISUAL='nvim'
 export EDITOR='nvim'
 
@@ -110,3 +122,11 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 . "$HOME/.cargo/env"
+
+# pnpm
+export PNPM_HOME="/home/nicobao/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

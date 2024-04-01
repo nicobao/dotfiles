@@ -107,7 +107,7 @@ alias devgen='zkorum && make dev-generate'
 alias dev='/home/nicobao/zkorum/zkorum/run_all_in_gnome_terminal_tabs.sh'
 
 # Load private (not in chezmoi git repo)
-if [ -f ~/.bash_aliases ]; then
+if [ -f ~/.bash_aliases ]; then 
     . ~/.bash_aliases
 fi
 

@@ -63,9 +63,9 @@ require('lazy').setup({
         end
 
         -- Navigation
-        map('n', '<leader>gn', function()
+        map('n', '<leader>bn', function()
           if vim.wo.diff then
-            return '<leader>gn'
+            return '<leader>bn'
           end
           vim.schedule(function()
             gs.next_hunk()
@@ -73,9 +73,9 @@ require('lazy').setup({
           return '<Ignore>'
         end, { expr = true })
 
-        map('n', '<leader>gp', function()
+        map('n', '<leader>bp', function()
           if vim.wo.diff then
-            return '<leader>gp'
+            return '<leader>bp'
           end
           vim.schedule(function()
             gs.prev_hunk()
@@ -84,30 +84,30 @@ require('lazy').setup({
         end, { expr = true })
 
         -- Actions
-        map('n', '<leader>ga', gs.stage_hunk)
-        map('n', '<leader>gr', gs.reset_hunk)
-        map('v', '<leader>ga', function()
+        map('n', '<leader>ba', gs.stage_hunk)
+        map('n', '<leader>br', gs.reset_hunk)
+        map('v', '<leader>ba', function()
           gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end)
-        map('v', '<leader>gr', function()
+        map('v', '<leader>br', function()
           gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end)
-        map('n', '<leader>gA', gs.stage_buffer)
-        map('n', '<leader>gu', gs.undo_stage_hunk)
-        map('n', '<leader>gR', gs.reset_buffer)
-        map('n', '<leader>gv', gs.preview_hunk)
-        map('n', '<leader>gb', function()
+        map('n', '<leader>bA', gs.stage_buffer)
+        map('n', '<leader>bu', gs.undo_stage_hunk)
+        map('n', '<leader>bR', gs.reset_buffer)
+        map('n', '<leader>bv', gs.preview_hunk)
+        map('n', '<leader>bb', function()
           gs.blame_line { full = true }
         end)
-        map('n', '<leader>gt', gs.toggle_current_line_blame)
-        map('n', '<leader>gd', gs.diffthis)
-        map('n', '<leader>gD', function()
+        map('n', '<leader>bt', gs.toggle_current_line_blame)
+        map('n', '<leader>bd', gs.diffthis)
+        map('n', '<leader>bD', function()
           gs.diffthis '~'
         end)
-        map('n', '<leader>ge', gs.toggle_deleted)
+        map('n', '<leader>be', gs.toggle_deleted)
 
         -- Text object
-        map({ 'o', 'x' }, '<leader>gs', ':<C-U>Gitsigns select_hunk<CR>')
+        map({ 'o', 'x' }, '<leader>bs', ':<C-U>Gitsigns select_hunk<CR>')
       end,
     },
   },
@@ -137,7 +137,7 @@ require('lazy').setup({
       require('which-key').register {
         -- ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
         -- ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+        ['<leader>b'] = { name = 'Git', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>sc'] = { name = '[S]earch in [C]urrent buffer directory', _ = 'which_key_ignore' },
@@ -245,6 +245,7 @@ require('lazy').setup({
         builtin.git_files { cwd = vim.fn.expand '%:p:h' }
       end, { desc = '[S]earch Git [P]roject files in current buffer directory' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<C-p>', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>scf', function()
         builtin.find_files { cwd = vim.fn.expand '%:p:h' }
       end, { desc = '[S]earch files in [C]urrent buffer directory ' })
@@ -252,8 +253,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>scw', function()
         builtin.grep_string { cwd = vim.fn.expand '%:p:h' }
-      end, { desc = '[S]earch current [W]ord' })
+      end, { desc = '[S]earch current [W]ord in [C]urrent buffer directory' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>scg', function()
+        builtin.live_grep { cwd = vim.fn.expand '%:p:h' }
+      end, { desc = '[S]earch [G]rep in [C]urrent buffer directory' })
       vim.keymap.set('n', '<leader>su', function()
         builtin.live_grep { cwd = vim.fn.expand '%:p:h' }
       end, { desc = '[S]earch by grep in c[U]rrent directory ' })
@@ -415,6 +419,8 @@ require('lazy').setup({
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      -- For JSONLs:
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -425,6 +431,8 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      --
+      local wk = require 'which-key'
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -437,6 +445,37 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
+        --Enable (broadcasting) snippet capability for completion
+        jsonls = {},
+        volar = {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+          init_options = {
+            vue = {
+              hybridMode = false,
+            },
+          },
+          on_attach = function(client, bufnr)
+            wk.register({
+              ['<leader>gr'] = {
+                function()
+                  client.request(
+                    'volar/client/findFileReference',
+                    { textDocument = vim.lsp.util.make_text_document_params(bufnr) },
+                    function(_, locations, context)
+                      local items = vim.lsp.util.locations_to_items(locations, client.offset_encoding)
+                      vim.fn.setqflist({}, ' ', { title = 'Vue File References', items = items, context = context })
+                      require('telescope.builtin').quickfix()
+                      -- vim.api.nvim_command "copen"
+                    end,
+                    bufnr
+                  )
+                end,
+                'Vue file references',
+              },
+            }, { mode = 'n', noremap = true, buffer = bufnr })
+          end,
+        },
+        html = {},
         --
 
         lua_ls = {

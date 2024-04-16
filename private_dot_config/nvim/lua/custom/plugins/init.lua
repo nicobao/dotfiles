@@ -20,11 +20,26 @@ return {
     end,
   },
   'tpope/vim-fugitive',
-  {
-    'pmizio/typescript-tools.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
-    opts = {},
-  },
+  -- {
+  --   'pmizio/typescript-tools.nvim',
+  --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+  --   opts = {
+  --     filetypes = {
+  --       'javascript',
+  --       'javascriptreact',
+  --       'typescript',
+  --       'typescriptreact',
+  --
+  --       'vue', -- This needed to be added.
+  --     },
+  --     settings = {
+  --       tsserver_plugins = {
+  --         -- Seemingly this is enough, no name, location or languages needed.
+  --         '@vue/typescript-plugin',
+  --       },
+  --     },
+  --   },
+  -- },
   -- {
   --   'karb94/neoscroll.nvim',
   --   config = function()

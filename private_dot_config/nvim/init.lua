@@ -1,6 +1,7 @@
 require 'custom.set'
 require 'custom.remap'
 require 'custom.autocmd'
+-- require 'kickstart.plugins.lint'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -64,9 +65,9 @@ require('lazy').setup({
 
         -- Navigation
         map('n', '<leader>bn', function()
-          if vim.wo.diff then
-            return '<leader>bn'
-          end
+          -- if vim.wo.diff then
+          --   return '<leader>bn'
+          -- end
           vim.schedule(function()
             gs.next_hunk()
           end)
@@ -74,9 +75,9 @@ require('lazy').setup({
         end, { expr = true })
 
         map('n', '<leader>bp', function()
-          if vim.wo.diff then
-            return '<leader>bp'
-          end
+          -- if vim.wo.diff then
+          --   return '<leader>bp'
+          -- end
           vim.schedule(function()
             gs.prev_hunk()
           end)
@@ -130,20 +131,57 @@ require('lazy').setup({
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-    config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup()
+    opts = {
+      icons = {
+        -- set icon mappings to true if you have a Nerd Font
+        mappings = vim.g.have_nerd_font,
+        -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
+        -- default whick-key.nvim defined Nerd Font icons, otherwise define a string table
+        keys = vim.g.have_nerd_font and {} or {
+          Up = '<Up> ',
+          Down = '<Down> ',
+          Left = '<Left> ',
+          Right = '<Right> ',
+          C = '<C-…> ',
+          M = '<M-…> ',
+          D = '<D-…> ',
+          S = '<S-…> ',
+          CR = '<CR> ',
+          Esc = '<Esc> ',
+          ScrollWheelDown = '<ScrollWheelDown> ',
+          ScrollWheelUp = '<ScrollWheelUp> ',
+          NL = '<NL> ',
+          BS = '<BS> ',
+          Space = '<Space> ',
+          Tab = '<Tab> ',
+          F1 = '<F1>',
+          F2 = '<F2>',
+          F3 = '<F3>',
+          F4 = '<F4>',
+          F5 = '<F5>',
+          F6 = '<F6>',
+          F7 = '<F7>',
+          F8 = '<F8>',
+          F9 = '<F9>',
+          F10 = '<F10>',
+          F11 = '<F11>',
+          F12 = '<F12>',
+        },
+      },
 
       -- Document existing key chains
-      require('which-key').register {
-        -- ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        -- ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>b'] = { name = 'Git', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>sc'] = { name = '[S]earch in [C]urrent buffer directory', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-      }
-    end,
+      spec = {
+        -- { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+        -- { '<leader>d', group = '[D]ocument' },
+        { '<leader>b', group = 'Git' },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>sc', group = '[S]earch in [C]urrent buffer directory' },
+        { '<leader>w', group = '[W]orkspace' },
+        -- { '<leader>t', group = '[T]oggle' },
+        -- { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+      },
+    },
   },
 
   -- NOTE: Plugins can specify dependencies.
@@ -298,7 +336,7 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      'williamboman/mason.nvim',
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -433,9 +471,11 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       --
       local wk = require 'which-key'
+      local mason_registry = require 'mason-registry'
+      local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -443,9 +483,21 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        -- But for many setups, the LSP (`ts_ls`) will work just fine
+        -- ts_ls = {
+        --   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        --   init_options = {
+        --     plugins = {
+        --       {
+        --         name = '@vue/typescript-plugin',
+        --         location = vue_language_server_path,
+        --         languages = { 'vue' },
+        --       },
+        --     },
+        --   },
+        -- },
         --Enable (broadcasting) snippet capability for completion
+        dockerls = {},
         jsonls = {},
         volar = {
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
@@ -455,8 +507,9 @@ require('lazy').setup({
             },
           },
           on_attach = function(client, bufnr)
-            wk.register({
-              ['<leader>gr'] = {
+            wk.add {
+              {
+                '<leader>gr',
                 function()
                   client.request(
                     'volar/client/findFileReference',
@@ -470,9 +523,12 @@ require('lazy').setup({
                     bufnr
                   )
                 end,
-                'Vue file references',
-              },
-            }, { mode = 'n', noremap = true, buffer = bufnr })
+              }, -- group
+              desc = 'Vue file references',
+              mode = 'n',
+              noremap = true,
+              buffer = bufnr,
+            }
           end,
         },
         html = {},
@@ -507,6 +563,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'vue-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -516,7 +573,7 @@ require('lazy').setup({
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
+            -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
@@ -527,6 +584,18 @@ require('lazy').setup({
 
   { -- Autoformat
     'stevearc/conform.nvim',
+    event = { 'BufWritePre' },
+    cmd = { 'ConformInfo' },
+    keys = {
+      {
+        '<leader>f',
+        function()
+          require('conform').format { async = true, lsp_format = 'fallback' }
+        end,
+        mode = '',
+        desc = '[F]ormat buffer',
+      },
+    },
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
@@ -534,9 +603,15 @@ require('lazy').setup({
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
+        local lsp_format_opt
+        if disable_filetypes[vim.bo[bufnr].filetype] then
+          lsp_format_opt = 'never'
+        else
+          lsp_format_opt = 'fallback'
+        end
         return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          timeout_ms = 2500,
+          lsp_format = lsp_format_opt,
         }
       end,
       formatters_by_ft = {
@@ -546,7 +621,9 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        vue = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },

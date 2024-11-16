@@ -66,3 +66,7 @@ vim.keymap.set('n', '<leader><right>', '<cmd>vertical resize +5<CR>', { noremap 
 vim.keymap.set('n', '<leader><left>', '<cmd>vertical resize -5<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><up>', '<cmd>resize +5<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><down>', '<cmd>resize -5<CR>', { noremap = true, silent = true })
+
+-- vim-fugitive
+vim.keymap.set('n', '<leader>bo', '<cmd>GBrowse<CR>')
+vim.keymap.set('v', '<leader>bo', ":'<,'>GBrowse<CR>") -- <cmd> would give "Mark not set" the first time the command is called before stopping visual and doing it again

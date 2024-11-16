@@ -20,6 +20,17 @@ return {
     end,
   },
   'tpope/vim-fugitive',
+  'tpope/vim-rhubarb',
+  'mfussenegger/nvim-jdtls',
+  -- {
+  --   'akinsho/flutter-tools.nvim',
+  --   lazy = false,
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'stevearc/dressing.nvim', -- optional for vim.ui.select
+  --   },
+  --   config = true,
+  -- },
   -- {
   --   'pmizio/typescript-tools.nvim',
   --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
@@ -45,5 +56,20 @@ return {
   --   config = function()
   --     require('neoscroll').setup {}
   --   end,
+  -- },
+  -- {
+  --   'jose-elias-alvarez/null-ls.nvim',
+  --   config = function()
+  --     local null_ls = require 'null-ls'
+  --     null_ls.setup {
+  --       sources = {
+  --         null_ls.builtins.formatting.stylua,
+  --         null_ls.builtins.diagnostics.eslint,
+  --         null_ls.builtins.completion.spell,
+  --         null_ls.builtins.formatting.prettier,
+  --       },
+  --     }
+  --   end,
+  --   requires = { 'nvim-lua/plenary.nvim' },
   -- },
 }

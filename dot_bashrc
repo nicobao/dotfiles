@@ -98,13 +98,29 @@ alias vim='nvim'
 alias zkorum='cd /home/nicobao/zkorum/zkorum'
 alias front='cd /home/nicobao/zkorum/zkorum/services/front'
 alias back='cd /home/nicobao/zkorum/zkorum/services/back'
+alias api='cd /home/nicobao/zkorum/zkorum/services/api'
 alias shared='cd /home/nicobao/zkorum/zkorum/services/shared'
 alias landing='cd /home/nicobao/zkorum/zkorum/services/landing-page'
+alias agora='cd /home/nicobao/zkorum/zkorum/services/agora'
 alias devfront='zkorum && make dev-front'
-alias devback='zkorum && make dev-back'
+alias devapi='zkorum && make dev-api'
 alias devsync='zkorum && make dev-sync'
 alias devgen='zkorum && make dev-generate'
 alias dev='/home/nicobao/zkorum/zkorum/run_all_in_gnome_terminal_tabs.sh'
+
+### SSH Agent @see https://serverfault.com/a/1020834 ###
+# SSH Agent should be running, once
+runcount=$(ps -ef | grep "ssh-agent" | grep -v "grep" | wc -l)
+if [ $runcount -eq 0 ]; then
+    echo Starting SSH Agent
+    eval $(ssh-agent -s)
+fi
+ssh-add -l &>/dev/null
+if ! [ "$?" == 0 ]; then
+     echo Adding keys...
+     ssh-add -t 1d
+fi
+###########
 
 # Load private (not in chezmoi git repo)
 if [ -f ~/.bash_aliases ]; then 
@@ -114,14 +130,14 @@ fi
 export VISUAL='nvim'
 export EDITOR='nvim'
 
+# Android Studio
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+PATH=$PATH:$ANDROID_SDK_ROOT/build-tools/34.0.0; PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-
-# Adding homebrew at the end to not override apt packages
-PATH=$PATH:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin
-
-eval "$(fzf --bash)"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -135,3 +151,16 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Adding homebrew at the end to not override apt packages
+PATH=$PATH:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin
+
+eval "$(fzf --bash)"
+
+# go install
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$HOME/go/bin
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

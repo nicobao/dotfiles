@@ -1,6 +1,6 @@
 # dotfiles
 
-My config for my personal computer, currently running Debian 12.
+My config for my personal computer, used to run Debian 12, now macOS.
 
 ## License
 

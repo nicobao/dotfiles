@@ -1,0 +1,53 @@
+[user]
+	email = 46368291+nicobao@users.noreply.github.com
+	name = Nicolas Gimenez
+	username = nicobao
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILNIp6bd6U7tH49eevSWh3LbAKSh4Qllu2NEhaRCaKVL
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+[merge]
+	conflictstyle = diff3
+	tool = vimdiff
+
+[mergetool "vimdiff"]
+	cmd = /opt/neovim/nvim.appimage -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+
+[alias]
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    # This will delete all local branches that used to have an upstream remote branch, but the remote branch has been deleted since then.
+	# See https://stackoverflow.com/a/33548037 for the bash command & https://stackoverflow.com/a/14994923 to embed it in .gitconfig 
+    prune-local-branches = "!f() { git fetch -p && for branch in $(git branch -vv | grep ': gone]' | awk '{print $1}'); do git branch -D $branch; done ;  }; f"
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = main
+
+[core]
+    editor = nvim
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+
+    # delta detects terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+
+[diff]
+    colorMoved = default

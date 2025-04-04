@@ -85,7 +85,7 @@ source $ZSH/oh-my-zsh.sh
 if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='nvim'
 else
-   export EDITOR='nvim'
+   export EDITOR='code --wait'
 fi
 
 # Compilation flags
@@ -104,3 +104,7 @@ $ZSH_CUSTOM/private_aliases.zsh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 source <(fzf --zsh)
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
